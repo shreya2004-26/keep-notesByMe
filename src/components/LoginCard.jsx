@@ -3,31 +3,57 @@ import React, { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 const LoginCard = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
   const handleLogin = async () => {
-    try {
-      // console.log(formData);
+    // console.log(formData);
 
-      const res = await axios.post("http://localhost:8000/api/login", formData);
-      console.log(res.data.data);
-      localStorage.setItem("email", res.data.data.email);
-      const userEmail = localStorage.getItem("email");
-      console.log(userEmail);
-
+    const res = await axios.post("http://localhost:8000/api/login", formData);
+    console.log(res.data.data);
+    localStorage.setItem("email", res.data.data.email);
+    const userEmail = localStorage.getItem("email");
+    console.log(userEmail);
+    if (!formData.email || !formData.password) {
+      toast.error("All fields are required", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+    const { success, message } = res.data;
+    if (success) {
+      toast.success(message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setFormData({ email: "", password: "" });
       navigate("/");
-    } catch (error) {
-      if (error.response) {
-        console.error("Server responded with error:", error.response.data);
-        console.error("Status code:", error.response.status);
-      } else if (error.request) {
-        console.error("No response received:", error.request);
-      } else {
-        console.error("Axios error:", error.message);
-      }
+    } else {
+      toast.error(message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 

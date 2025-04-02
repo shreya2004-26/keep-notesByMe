@@ -15,6 +15,18 @@ const RegisterCard = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
+    if (!name || !email || !password) {
+      toast.error("All fields are required", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
     const res = await axios.post("http://localhost:8000/api/register", {
       email: localStorage.getItem("email"),
       ...formData,
@@ -30,7 +42,7 @@ const RegisterCard = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "dark",
+        theme: "light",
       });
       setFormData({ name: "", email: "", password: "" });
       navigate("/login");
