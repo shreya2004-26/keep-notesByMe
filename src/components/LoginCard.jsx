@@ -17,18 +17,6 @@ const LoginCard = () => {
     localStorage.setItem("email", res.data.data.email);
     const userEmail = localStorage.getItem("email");
     console.log(userEmail);
-    if (!formData.email || !formData.password) {
-      toast.error("All fields are required", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-    }
     const { success, message } = res.data;
     if (success) {
       toast.success(message, {
