@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 import { IoReorderThreeSharp } from "react-icons/io5";
 import { IoMdRefresh } from "react-icons/io";
@@ -6,7 +6,9 @@ import logo from "../assets/keepNotesLogo.png";
 import { TfiViewList } from "react-icons/tfi";
 import { FaUser } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
+import { useSearch } from "../context/SearchContext";
 const Header = () => {
+  const { searchTerm, setSearchTerm } = useSearch();
   return (
     <div className="flex justify-between items-center p-4 border-b border-b-gray-300">
       <div className="flex justify-between ">
@@ -17,7 +19,12 @@ const Header = () => {
         </div>
         <div className="flex items-center gap-2 border-1 rounded p-3 bg-gray-200 border-none w-xl text-[17px]">
           <IoSearchSharp className="text-gray-500" />
-          <input className="border-none outline-none" placeholder="Search" />
+          <input
+            className="border-none outline-none"
+            placeholder="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
       </div>
       <div className="flex items-center gap-x-16 px-5 text-2xl text-gray-600">

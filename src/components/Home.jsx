@@ -3,8 +3,10 @@ import React, { useEffect, useState } from "react";
 import { FaRegPlusSquare } from "react-icons/fa";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { useSearch } from "../context/SearchContext";
 const Home = () => {
   const [noteData, setNoteData] = useState({ title: "", description: "" });
+  const { searchTerm } = useSearch();
   const [notes, setNotes] = useState([]);
   const [email, setEmail] = useState("");
   const [editMode, setEditMode] = useState(false);
@@ -13,6 +15,7 @@ const Home = () => {
     title: "",
     description: "",
   });
+  // console.log("Hi");
 
   useEffect(() => {
     setEmail(localStorage.getItem("email"));
@@ -110,6 +113,9 @@ const Home = () => {
     }
   };
 
+  const filterNotes = notes.filter((note) => {
+    return note.title.toLowerCase().includes(searchTerm.toLowerCase());
+  });
   return (
     <div className="w-screen max-h-screen flex flex-col justify-center items-center">
       <div className="flex flex-col mt-6 w-[500px] px-4 py-3 border border-gray-200 rounded shadow-md text-md">
@@ -179,27 +185,29 @@ const Home = () => {
 
       {/* display notes */}
       <div className="mt-8 grid grid-cols-4 gap-4">
-        {notes.map((note, index) => {
-          return (
-            <div
-              key={index}
-              className="border border-gray-300 p-6 rounded shadow-md w-[250px]"
-            >
-              <p>{note.title}</p>
-              <p>{note.description}</p>
-              <div className="flex gap-3 mt-4 w-[80px]">
-                <MdDelete
-                  onClick={() => deleteNote(note._id)}
-                  className="text-red-800 cursor-pointer"
-                />
-                <FaRegEdit
-                  onClick={() => enableEdit(note)}
-                  className="text-yellow-600 cursor-pointer"
-                />
-              </div>
-            </div>
-          );
-        })}
+        {filterNotes.length > 0
+          ? filterNotes.map((note, index) => {
+              return (
+                <div
+                  key={index}
+                  className="border border-gray-300 p-6 rounded shadow-md w-[250px]"
+                >
+                  <p>{note.title}</p>
+                  <p>{note.description}</p>
+                  <div className="flex gap-3 mt-4 w-[80px]">
+                    <MdDelete
+                      onClick={() => deleteNote(note._id)}
+                      className="text-red-800 cursor-pointer"
+                    />
+                    <FaRegEdit
+                      onClick={() => enableEdit(note)}
+                      className="text-yellow-600 cursor-pointer"
+                    />
+                  </div>
+                </div>
+              );
+            })
+          : "No notes found"}
       </div>
     </div>
   );
