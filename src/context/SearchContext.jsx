@@ -1,15 +1,24 @@
 import { createContext, useContext, useState } from "react";
 
-// create a search context
+// Create a search context
 const SearchContext = createContext();
 
-//provider component
-export const SearchProvider = ({ children }) => {
+// Provider component
+const SearchProvider = ({ children }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  <SearchContext.Provider value={{ searchTerm, setSearchTerm }}>
-    {children}
-  </SearchContext.Provider>;
+  const [view, setView] = useState("list");
+
+  return (
+    <SearchContext.Provider
+      value={{ searchTerm, setSearchTerm, view, setView }}
+    >
+      {children}
+    </SearchContext.Provider>
+  );
 };
 
-//custom hook for using search context
-export const useSearch = () => useContext(SearchContext);
+// Custom hook for using search context
+const useSearch = () => useContext(SearchContext);
+
+// Export at the end
+export { SearchProvider, useSearch };

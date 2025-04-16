@@ -5,6 +5,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useSearch } from "../context/SearchContext";
 const Home = () => {
+  const { view, setView } = useSearch();
   const [noteData, setNoteData] = useState({ title: "", description: "" });
   const { searchTerm } = useSearch();
   const [notes, setNotes] = useState([]);
@@ -15,23 +16,25 @@ const Home = () => {
     title: "",
     description: "",
   });
-  // console.log("Hi");
-
   useEffect(() => {
-    setEmail(localStorage.getItem("email"));
-    console.log(email);
+    fetchNotes();
+  }, []);
 
-    if (email) {
-      fetchNotes();
-    }
-  }, [email]);
+  // useEffect(() => {
+  //   setEmail(localStorage.getItem("email"));
+  //   console.log(email);
+
+  //   if (email) {
+  //     fetchNotes();
+  //   }
+  // }, [email]);
 
   // fetch notes from the api
   const fetchNotes = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8000/api/notes?email=${email}`
-      );
+      const res = await axios.get(`http://localhost:8000/api/notes`, {
+        withCredentials: true,
+      }); //if you want to send cookies in the request then you have to write {withCredentials:true}
       console.log(res?.data[0].notes);
 
       setNotes(res?.data[0]?.notes || []);
@@ -45,14 +48,19 @@ const Home = () => {
   const addNote = async () => {
     if (!noteData.title || !noteData.description) return;
     try {
-      await axios.post("http://localhost:8000/api/notes", {
-        email,
-        title: noteData.title,
-        description: noteData.description,
-      });
-
+      await axios.post(
+        "http://localhost:8000/api/notes",
+        {
+          title: noteData.title,
+          description: noteData.description,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      fetchNotes();
       //update notes state locally
-      setNotes([...notes, noteData]);
+      // setNotes([...notes, noteData]);
 
       // clear input fields
       setNoteData({ title: "", description: "" });
@@ -65,9 +73,9 @@ const Home = () => {
     try {
       console.log(noteId);
 
-      await axios.delete(
-        `http://localhost:8000/api/notes?id=${noteId}&&email=${email}`
-      );
+      await axios.delete(`http://localhost:8000/api/notes?id=${noteId}`, {
+        withCredentials: true,
+      });
       setNotes(
         notes.filter((note, idx) => {
           return note._id !== noteId;
@@ -91,12 +99,15 @@ const Home = () => {
   //update the note in the backend
   const updateNote = async () => {
     try {
-      await axios.put("http://localhost:8000/api/notes", {
-        id: editNoteData.id,
-        email,
-        title: editNoteData.title,
-        description: editNoteData.description,
-      });
+      await axios.put(
+        "http://localhost:8000/api/notes",
+        {
+          id: editNoteData.id,
+          title: editNoteData.title,
+          description: editNoteData.description,
+        },
+        { withCredentials: true }
+      );
 
       // update notes in state
       setNotes(
@@ -117,8 +128,8 @@ const Home = () => {
     return note.title.toLowerCase().includes(searchTerm.toLowerCase());
   });
   return (
-    <div className="w-screen max-h-screen flex flex-col justify-center items-center">
-      <div className="flex flex-col mt-6 w-[500px] px-4 py-3 border border-gray-200 rounded shadow-md text-md">
+    <div className="w-screen flex flex-col justify-center items-center mt-8">
+      <div className="flex flex-col w-[500px] px-4 py-3 border border-gray-200 rounded shadow-md text-md">
         <input
           placeholder="Title.."
           className="border-none outline-none font-semibold text-black mb-5"
@@ -184,13 +195,19 @@ const Home = () => {
       )}
 
       {/* display notes */}
-      <div className="mt-8 grid grid-cols-4 gap-4">
+      <div
+        className={
+          view === "grid"
+            ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-8 w-[900px]"
+            : "flex flex-col w-[800px] mt-8 gap-4"
+        }
+      >
         {filterNotes.length > 0
           ? filterNotes.map((note, index) => {
               return (
                 <div
                   key={index}
-                  className="border border-gray-300 p-6 rounded shadow-md w-[250px]"
+                  className="border border-gray-300 p-6 rounded shadow-md w-full"
                 >
                   <p>{note.title}</p>
                   <p>{note.description}</p>

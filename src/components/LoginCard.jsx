@@ -12,11 +12,15 @@ const LoginCard = () => {
   const handleLogin = async () => {
     // console.log(formData);
 
-    const res = await axios.post("http://localhost:8000/api/login", formData);
+    const res = await axios.post("http://localhost:8000/api/login", formData, {
+      withCredentials: true,
+    });
     console.log(res.data.data);
-    localStorage.setItem("email", res.data.data.email);
-    const userEmail = localStorage.getItem("email");
-    console.log(userEmail);
+    // console.log(res.data);
+
+    localStorage.setItem("token", res?.data?.token);
+    // const userEmail = localStorage.getItem("email");
+    // console.log(userEmail);
     const { success, message } = res.data;
     if (success) {
       toast.success(message, {
