@@ -11,10 +11,14 @@ const LoginCard = () => {
   const navigate = useNavigate();
   const handleLogin = async () => {
     // console.log(formData);
-
-    const res = await axios.post("http://localhost:8000/api/login", formData, {
-      withCredentials: true,
-    });
+    console.log(import.meta.env.VITE_BACKEND_URL);
+    const res = await axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/api/login`,
+      formData,
+      {
+        withCredentials: true,
+      }
+    );
     console.log(res.data.data);
     // console.log(res.data);
 

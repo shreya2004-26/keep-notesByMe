@@ -13,7 +13,7 @@ const RegisterCard = () => {
     password: "",
   });
   const navigate = useNavigate();
-
+  console.log(import.meta.env.VITE_BACKEND_URL);
   const handleSubmit = async () => {
     if (!name || !email || !password) {
       toast.error("All fields are required", {
@@ -27,10 +27,13 @@ const RegisterCard = () => {
         theme: "dark",
       });
     }
-    const res = await axios.post("http://localhost:8000/api/register", {
-      email: localStorage.getItem("email"),
-      ...formData,
-    });
+    const res = await axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/api/register`,
+      {
+        email: localStorage.getItem("email"),
+        ...formData,
+      }
+    );
     console.log("Response:", res.data);
     const { success, message } = res.data;
     if (success) {

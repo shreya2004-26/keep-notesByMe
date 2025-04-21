@@ -30,11 +30,16 @@ const Home = () => {
   // }, [email]);
 
   // fetch notes from the api
+  console.log(import.meta.env.VITE_BACKEND_URL);
+
   const fetchNotes = async () => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/notes`, {
-        withCredentials: true,
-      }); //if you want to send cookies in the request then you have to write {withCredentials:true}
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/notes`,
+        {
+          withCredentials: true,
+        }
+      ); //if you want to send cookies in the request then you have to write {withCredentials:true}
       console.log(res?.data[0].notes);
 
       setNotes(res?.data[0]?.notes || []);
@@ -49,7 +54,7 @@ const Home = () => {
     if (!noteData.title || !noteData.description) return;
     try {
       await axios.post(
-        "http://localhost:8000/api/notes",
+        `${import.meta.env.VITE_BACKEND_URL}/api/notes`,
         {
           title: noteData.title,
           description: noteData.description,
@@ -73,9 +78,12 @@ const Home = () => {
     try {
       console.log(noteId);
 
-      await axios.delete(`http://localhost:8000/api/notes?id=${noteId}`, {
-        withCredentials: true,
-      });
+      await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/api/notes?id=${noteId}`,
+        {
+          withCredentials: true,
+        }
+      );
       setNotes(
         notes.filter((note, idx) => {
           return note._id !== noteId;
@@ -100,7 +108,7 @@ const Home = () => {
   const updateNote = async () => {
     try {
       await axios.put(
-        "http://localhost:8000/api/notes",
+        `${import.meta.env.VITE_BACKEND_URL}/api/notes`,
         {
           id: editNoteData.id,
           title: editNoteData.title,
